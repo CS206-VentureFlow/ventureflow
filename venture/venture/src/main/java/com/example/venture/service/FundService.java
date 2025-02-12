@@ -1,7 +1,6 @@
 package com.example.venture.service;
 
 import com.example.venture.dto.Fund;
-import com.example.venture.dto.VC;
 import com.example.venture.repository.FundRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ public class FundService {
     }
 
     @Transactional
-    public Fund createFund(Fund fund) {
+    public Fund saveFund(Fund fund) {
         return fundRepository.save(fund);
     }
 
@@ -27,7 +26,14 @@ public class FundService {
     }
 
     @Transactional
-    public Fund updateFund(Fund fund) {
+    public Fund updateFund(Fund fund) throws IllegalArgumentException {
+        // Check if the Fund exists by its ID
+        Optional<Fund> existingFund = fundRepository.findById(fund.getId());
+
+        if (existingFund.isEmpty()) {
+            throw new IllegalArgumentException("Fund with ID " + fund.getId() + " does not exist.");
+        }
+
         // Make sure that the fund exists before updating.
         return fundRepository.save(fund);
     }
