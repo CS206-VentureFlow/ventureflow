@@ -21,8 +21,8 @@ public class FundService {
         return fundRepository.save(fund);
     }
 
-    public Optional<Fund> getFundById(Long id) {
-        return fundRepository.findById(id);
+    public Fund getFundById(Long id) {
+        return fundRepository.findById(id).orElse(null);
     }
 
     @Transactional

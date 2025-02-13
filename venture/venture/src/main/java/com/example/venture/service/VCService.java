@@ -16,8 +16,8 @@ public class VCService {
         this.vcRepository = vcRepository;
     }
 
-    public Optional<VC> getVCById(Long id) {
-        return vcRepository.findById(id);
+    public VC getVCById(Long id) {
+        return vcRepository.findById(id).orElse(null);
     }
 
     @Transactional

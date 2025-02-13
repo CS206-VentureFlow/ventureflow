@@ -22,8 +22,8 @@ public class LPController {
 
     @GetMapping("/{lpID}/profile")
     public ResponseEntity<LP> getProfile(@PathVariable Long lpID) {
-        LP lp = lpService.getLPById(lpID).orElse(null);
-        if (lp ==  null) {
+        LP lp = lpService.getLPById(lpID);
+        if (lp == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(lp, HttpStatus.OK);
@@ -31,7 +31,7 @@ public class LPController {
 
     @GetMapping("/{lpID}/funds")
     public ResponseEntity<Set<Fund>> getFunds(@PathVariable Long lpID) {
-        LP lp = lpService.getLPById(lpID).orElse(null);
+        LP lp = lpService.getLPById(lpID);
         if (lp == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }

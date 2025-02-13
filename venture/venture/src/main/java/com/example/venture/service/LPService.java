@@ -15,8 +15,8 @@ public class LPService {
         this.lpRepository = lpRepository;
     }
 
-    public Optional<LP> getLPById(Long id) {
-        return lpRepository.findById(id);
+    public LP getLPById(Long id) {
+        return lpRepository.findById(id).orElse(null);
     }
 
     @Transactional
