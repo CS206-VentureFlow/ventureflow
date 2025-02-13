@@ -6,8 +6,8 @@ import {
   IconMoon,
   IconSun,
 } from '@tabler/icons-react'
-import { useSearch } from '@/context/search-context'
-import { useTheme } from '@/context/theme-context'
+import { useSearch } from '../context/search-context'
+import { useTheme } from '../context/theme-context'
 import {
   CommandDialog,
   CommandEmpty,
