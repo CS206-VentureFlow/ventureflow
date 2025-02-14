@@ -1,6 +1,7 @@
 package com.example.venture.utility;
 
 import com.example.venture.dto.FundData;
+import com.example.venture.service.FundDataService;
 import com.example.venture.service.FundService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -16,9 +17,11 @@ import java.io.InputStream;
 public class ExcelUtility {
 
     private final FundService fundService;
+    private final FundDataService fundDataService;
 
-    public ExcelUtility(FundService fundService) {
+    public ExcelUtility(FundService fundService, FundDataService fundDataService) {
         this.fundService = fundService;
+        this.fundDataService = fundDataService;
     }
 
     public void readExcel(MultipartFile file, Long fundID) throws IOException {
@@ -35,9 +38,9 @@ public class ExcelUtility {
             }
             FundData fundData = new FundData();
             // TODO: Map other columns to FundData fields here
-            fundData.setFund(fundID);
+            fundData.setFund(fundService.getFundById(fundID));
 
-            fundService.save(fundData); // Save each FundData object
+            fundDataService.saveFundData(fundData); // Save each FundData object
         }
 
         workbook.close();

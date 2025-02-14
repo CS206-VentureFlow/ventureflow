@@ -23,4 +23,10 @@ public class VC {
     private String phoneNumber;
     @OneToMany(mappedBy = "vc")
     private Set<Fund> funds = new HashSet<>();
+
+    public VC(String name, String email, String phoneNumber) {
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 }

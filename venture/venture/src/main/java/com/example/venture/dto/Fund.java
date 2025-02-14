@@ -20,8 +20,10 @@ public class Fund {
     @ManyToOne
     @JoinColumn(name = "vc_id")
     private VC vc;
-    @OneToMany(mappedBy = "fund")
-    private Set<Notification> notifications = new HashSet<>();
     @OneToMany
     private List<FundData> fundData = new ArrayList<>();
+    @OneToMany(mappedBy = "fund")
+    private Set<Notification> notifications = new HashSet<>();
+    @OneToMany(mappedBy = "fund")
+    private Set<Message> messages = new HashSet<>();
 }

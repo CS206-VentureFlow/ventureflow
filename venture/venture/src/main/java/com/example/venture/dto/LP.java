@@ -24,4 +24,10 @@ public class LP {
         inverseJoinColumns =
             @JoinColumn(name="fund_id"))
     private Set<Fund> funds = new HashSet<>();
+
+    public LP(String name, String email, String phoneNumber) {
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 }

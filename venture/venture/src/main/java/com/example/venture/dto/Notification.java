@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/*
+    Notifications for a particular fund --> same for all VCs and LPs since they should be notified of the same funds details
+*/
+
 @Entity
 @Data
 @NoArgsConstructor
