@@ -3,16 +3,14 @@ package com.example.venture.service;
 import com.example.venture.dto.FundData;
 import com.example.venture.repository.FundDataRepository;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class FundDataService {
 
     private final FundDataRepository fundDataRepository;
-
-    public FundDataService(FundDataRepository fundDataRepository) {
-        this.fundDataRepository = fundDataRepository;
-    }
 
     public FundData getFundDataById(Long id) {
         return fundDataRepository.findById(id).orElse(null);
@@ -35,4 +33,8 @@ public class FundDataService {
     public void deleteFundData(Long id) {
         fundDataRepository.deleteById(id);
     }
+
+    // TODO: Check if fund data object already exist in DB
+
+
 }

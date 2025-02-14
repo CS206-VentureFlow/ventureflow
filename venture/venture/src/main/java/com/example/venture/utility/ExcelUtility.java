@@ -40,6 +40,11 @@ public class ExcelUtility {
             // TODO: Map other columns to FundData fields here
             fundData.setFund(fundService.getFundById(fundID));
 
+            // Check if the FundData already exists in the database
+//            if (fundDataService.exists(fundData)) {
+//                break; // Stop reading the file if the FundData already exists
+//            }
+
             fundDataService.saveFundData(fundData); // Save each FundData object
         }
 

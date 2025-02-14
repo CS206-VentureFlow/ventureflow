@@ -12,16 +12,22 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Fund {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String fundName;
+
+    // Mapped Users
     @ManyToMany(mappedBy = "funds")
     private Set<LP> lps = new HashSet<>();
     @ManyToOne
     @JoinColumn(name = "vc_id")
     private VC vc;
+
+    // Fund Excel Data
     @OneToMany
     private List<FundData> fundData = new ArrayList<>();
+
+    // Fund Notifications and Messages
     @OneToMany(mappedBy = "fund")
     private Set<Notification> notifications = new HashSet<>();
     @OneToMany(mappedBy = "fund")

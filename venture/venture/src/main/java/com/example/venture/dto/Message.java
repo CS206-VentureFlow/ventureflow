@@ -17,7 +17,7 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String message;
     private String sender;

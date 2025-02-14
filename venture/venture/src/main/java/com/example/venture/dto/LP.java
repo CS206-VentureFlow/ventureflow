@@ -1,9 +1,7 @@
 package com.example.venture.dto;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.*;
 
@@ -11,12 +9,9 @@ import java.util.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LP {
-    @Id @GeneratedValue
-    private Long id;
-    private String name;
-    private String email;
-    private String phoneNumber;
+@DiscriminatorValue("L")
+public class LP extends User {
+
     @ManyToMany
     @JoinTable(name = "lp_fund",
         joinColumns =
@@ -26,8 +21,6 @@ public class LP {
     private Set<Fund> funds = new HashSet<>();
 
     public LP(String name, String email, String phoneNumber) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
+        super(name, email, phoneNumber);
     }
 }

@@ -1,28 +1,24 @@
 package com.example.venture.controller;
 
-import com.example.venture.dto.Fund;
-import com.example.venture.dto.VC;
-import com.example.venture.service.VCService;
+import com.example.venture.dto.*;
+import com.example.venture.service.*;
 import com.example.venture.utility.ExcelUtility;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.AllArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/vc")
+@AllArgsConstructor
 public class VCController {
 
     private final VCService vcService;
     private final ExcelUtility excelUtility;
-
-    public VCController(VCService vcService, ExcelUtility excelUtility) {
-        this.vcService = vcService;
-        this.excelUtility = excelUtility;
-    }
+    private final NotificationService notificationService;
 
     @GetMapping("/{vcID}/profile")
     public ResponseEntity<VC> getProfile(@PathVariable Long vcID) {
@@ -41,6 +37,17 @@ public class VCController {
         }
         Set<Fund> allFunds = vc.getFunds();
         return new ResponseEntity<>(allFunds, HttpStatus.OK);
+    }
+
+    // Get all notifications for VC for the past week (all funds)
+    @GetMapping("/{vcID}/notifications")
+    public ResponseEntity<Set<Notification>> getNotifications(@PathVariable Long vcID) {
+        VC vc = vcService.getVCById(vcID);
+        if (vc == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        Set<Notification> allNotifications = notificationService.getRecentNotificationsForUser(vcID);
+        return new ResponseEntity<>(allNotifications, HttpStatus.OK);
     }
 
 
