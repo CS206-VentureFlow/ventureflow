@@ -7,6 +7,7 @@ import {
     Settings,
     ShoppingCart,
     UsersRound,
+    File,
   } from "lucide-react"
 import { Button } from './button'
 
@@ -60,6 +61,10 @@ export default function Sidebar({}: Props) {
                     icon: Settings,
                     variant: "ghost",
                     },
+                    {title: "Funds", 
+                    href: "/funds", 
+                    icon: File,     
+                    variant: "ghost"},
                 ]}
             />
         </div>
