@@ -2,6 +2,7 @@
 *.tfvars 
 .vscode/
 .idea/
+node_modules/
 
 # Compiled class file
 *.class
