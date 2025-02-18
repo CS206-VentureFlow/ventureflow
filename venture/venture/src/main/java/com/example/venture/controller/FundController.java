@@ -1,6 +1,6 @@
 package com.example.venture.controller;
 
-import com.example.venture.dto.*;
+import com.example.venture.model.*;
 import com.example.venture.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.*;
@@ -16,8 +16,7 @@ public class FundController {
 
     private final FundService fundService;
     private final FundDataService fundDataService;
-    private final LPService lpService;
-    private final VCService vcService;
+    private final UserService userService;
     private final MessageService messageService;
 
     // TODO: GET endpoints for all columns of FundData

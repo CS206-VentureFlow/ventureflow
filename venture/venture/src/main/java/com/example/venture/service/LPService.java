@@ -1,6 +1,6 @@
 package com.example.venture.service;
 
-import com.example.venture.dto.LP;
+import com.example.venture.model.LP;
 import com.example.venture.repository.LPRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

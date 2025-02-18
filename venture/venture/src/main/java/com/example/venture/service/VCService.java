@@ -1,6 +1,6 @@
 package com.example.venture.service;
 
-import com.example.venture.dto.VC;
+import com.example.venture.model.VC;
 import com.example.venture.repository.VCRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.example.venture.utility;
 
-import com.example.venture.dto.FundData;
+import com.example.venture.model.FundData;
 import com.example.venture.service.FundDataService;
 import com.example.venture.service.FundService;
 import org.apache.poi.ss.usermodel.Row;

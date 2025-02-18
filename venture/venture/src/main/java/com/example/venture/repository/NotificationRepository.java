@@ -1,8 +1,8 @@
 package com.example.venture.repository;
 
-import com.example.venture.dto.Notification;
+import com.example.venture.model.Notification;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Repository
-public interface NotificationRepository extends CrudRepository<Notification, Long> {
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     // Find notification from a specific fund AFTER a specific date
     @Query("SELECT n FROM Notification n WHERE n.fund.id = :fundId AND n.dateTime >= :startDate")

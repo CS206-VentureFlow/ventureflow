@@ -1,4 +1,4 @@
-package com.example.venture.dto;
+package com.example.venture.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -32,4 +32,10 @@ public class Fund {
     private Set<Notification> notifications = new HashSet<>();
     @OneToMany(mappedBy = "fund")
     private Set<Message> messages = new HashSet<>();
+
+    public Fund(String fundName, Set<LP> lps, VC vc) {
+        this.fundName = fundName;
+        this.lps = lps;
+        this.vc = vc;
+    }
 }

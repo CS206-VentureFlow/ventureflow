@@ -1,6 +1,6 @@
 package com.example.venture.controller;
 
-import com.example.venture.dto.*;
+import com.example.venture.model.*;
 import com.example.venture.service.*;
 import com.example.venture.utility.ExcelUtility;
 import lombok.AllArgsConstructor;
@@ -16,34 +16,36 @@ import java.util.*;
 @AllArgsConstructor
 public class VCController {
 
-    private final VCService vcService;
+    private final UserService userService;
     private final ExcelUtility excelUtility;
     private final NotificationService notificationService;
 
     @GetMapping("/{vcID}/profile")
     public ResponseEntity<VC> getProfile(@PathVariable Long vcID) {
-        VC vc = vcService.getVCById(vcID);
-        if (vc ==  null) {
+        User vc = userService.getUserById(vcID);
+        if (vc == null || !(vc instanceof VC)) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(vc, HttpStatus.OK);
+        VC castToVC = (VC) vc;
+        return new ResponseEntity<>(castToVC, HttpStatus.OK);
     }
 
     @GetMapping("/{vcID}/funds")
     public ResponseEntity<Set<Fund>> getFunds(@PathVariable Long vcID) {
-        VC vc = vcService.getVCById(vcID);
-        if (vc == null) {
+        User vc = userService.getUserById(vcID);
+        if (vc == null || !(vc instanceof VC)) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        Set<Fund> allFunds = vc.getFunds();
+        VC castToVC = (VC) vc;
+        Set<Fund> allFunds = castToVC.getFunds();
         return new ResponseEntity<>(allFunds, HttpStatus.OK);
     }
 
     // Get all notifications for VC for the past week (all funds)
     @GetMapping("/{vcID}/notifications")
     public ResponseEntity<Set<Notification>> getNotifications(@PathVariable Long vcID) {
-        VC vc = vcService.getVCById(vcID);
-        if (vc == null) {
+        User vc = userService.getUserById(vcID);
+        if (vc == null || !(vc instanceof VC)) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         Set<Notification> allNotifications = notificationService.getRecentNotificationsForUser(vcID);

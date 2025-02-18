@@ -1,7 +1,6 @@
-package com.example.venture.dto;
+package com.example.venture.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.CHAR)
+@DiscriminatorColumn(name = "userType", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("U")
 public class User {
 

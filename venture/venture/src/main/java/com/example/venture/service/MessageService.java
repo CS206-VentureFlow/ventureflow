@@ -1,6 +1,6 @@
 package com.example.venture.service;
 
-import com.example.venture.dto.*;
+import com.example.venture.model.*;
 import com.example.venture.repository.MessageRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.venture;
 
-import com.example.venture.dto.*;
+import com.example.venture.model.*;
 import com.example.venture.service.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -16,38 +16,34 @@ public class PopulateData {
 
     private final FundDataService fundDataService;
     private final FundService fundService;
-    private final VCService vcService;
-    private final LPService lpService;
+    private final UserService userService;
 
 
     private void populateLP(int number) {
         for (int i = 0; i < number; i++) {
             LP lp = new LP("LP " + i,  "email" + i + "@xyz.com", "1234567890");
-            lpService.saveLP(lp);
+            userService.saveUser(lp);
         }
     }
 
     private void populateVC(int number) {
         for (int i = 0; i < number; i++) {
             VC vc = new VC("VC " + i,  "email" + i + "@xyz.com", "1234567890");
-            vcService.saveVC(vc);
+            userService.saveUser(vc);
         }
     }
 
+
     private void populateFund(int number, int numLP) {
         for (int i = 0; i < number; i++) {
-            Fund fund = new Fund();
-            fund.setFundName("Fund " + i);
+            Set<LP> lps = userService.getAllLPs();
+            Set<VC> vcs = userService.getAlVCs();
 
-            Set<LP> lps = new HashSet<>();
-            for (int j = 0; j < numLP; j++) {
-                lps.add(lpService.getLPById((long) j));
+            // Create fund for each VC with all LP a
+            for (VC vc : vcs) {
+                Fund fund = new Fund("Fund " + i, lps, vc);
+                fundService.saveFund(fund);
             }
-            fund.setLps(lps);
-
-            fund.setVc(vcService.getVCById(1L));
-
-            fundService.saveFund(fund);
         }
     }
 
@@ -58,8 +54,8 @@ public class PopulateData {
         int numVC = 1;
         int numLP = 2;
 
-        populateFund(numFunds, numLP);
         populateVC(numVC);
         populateLP(numLP);
+        populateFund(numFunds, numLP);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.venture.dto;
+package com.example.venture.model;
 
 import jakarta.persistence.*;
 import lombok.*;

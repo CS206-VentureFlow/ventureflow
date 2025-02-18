@@ -1,10 +1,9 @@
-package com.example.venture.dto;
+package com.example.venture.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.compress.harmony.archive.internal.nls.Messages;
 
 import java.util.*;
 
