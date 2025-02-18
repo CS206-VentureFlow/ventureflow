@@ -13,10 +13,16 @@ export default function LineChart({ data, xKey, yKey }: LineChartProps) {
     <ResponsiveContainer width="100%" height={300}>
       <ReLineChart data={data}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey={xKey} />
+        <XAxis 
+          dataKey={xKey} 
+          tick={{ fontSize: 12 }} 
+          angle={-45} 
+          textAnchor="end" 
+          interval={0} 
+        />
         <YAxis />
         <Tooltip />
-        <Line type="monotone" dataKey={yKey} stroke="#2563eb" strokeWidth={2} dot={{ r: 4 }} />
+        <Line type="basis" dataKey={yKey} stroke="#2563eb" strokeWidth={2} dot={false} />
       </ReLineChart>
     </ResponsiveContainer>
   );
