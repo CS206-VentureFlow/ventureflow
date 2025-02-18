@@ -1,42 +1,32 @@
 package com.example.venture.service;
 
-import com.example.venture.model.VC;
-import com.example.venture.repository.VCRepository;
-import jakarta.transaction.Transactional;
+import java.util.HashMap;
+
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.example.venture.dto.VCdto;
+import com.example.venture.model.Fund;
+import com.example.venture.model.User;
+import com.example.venture.model.VC;
+
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class VCService {
+    UserService userService;
 
-    private final VCRepository vcRepository;
-
-    public VCService(VCRepository vcRepository) {
-        this.vcRepository = vcRepository;
-    }
-
-    public VC getVCById(Long id) {
-        return vcRepository.findById(id).orElse(null);
-    }
-
-    @Transactional
-    public VC saveVC(VC vc) {
-        return vcRepository.save(vc);
-    }
-
-    @Transactional
-    public VC updateVC(VC vc) {
-        Optional<VC> existingVC = vcRepository.findById(vc.getId());
-        if (existingVC.isEmpty()) {
-            throw new IllegalArgumentException("VC with ID " + vc.getId() + " does not exist.");
+    // Get VC DTO
+    public VCdto getVCDto(Long vcId) {
+        User user = userService.getUserById(vcId);
+        if (user == null || !(user instanceof VC)) {
+            return null;
         }
-        return vcRepository.save(vc);
+        VC vc = (VC) user;
+        HashMap<String, Long> fundMap = new HashMap<>();
+        for (Fund fund : vc.getFunds()) {
+            fundMap.put(fund.getFundName(), fund.getId());
+        }
+        return new VCdto(vc.getId(), vc.getName(), vc.getEmail(), vc.getContactNo(), fundMap);
     }
-
-    @Transactional
-    public void deleteVC(Long id) {
-        vcRepository.deleteById(id);
-    }
-    
 }

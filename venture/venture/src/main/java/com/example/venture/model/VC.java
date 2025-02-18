@@ -1,9 +1,14 @@
 package com.example.venture.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import java.util.List;
 
-import java.util.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
@@ -12,8 +17,8 @@ import java.util.*;
 @DiscriminatorValue("V")
 public class VC extends User {
 
-    @OneToMany(mappedBy = "vc")
-    private Set<Fund> funds = new HashSet<>();
+    @OneToMany(mappedBy = "vc", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Fund> funds;
 
     public VC(String name, String email, String phoneNumber) {
         super(name, email, phoneNumber);

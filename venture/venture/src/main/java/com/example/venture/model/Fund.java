@@ -17,23 +17,28 @@ public class Fund {
     private String fundName;
 
     // Mapped Users
-    @ManyToMany(mappedBy = "funds")
-    private Set<LP> lps = new HashSet<>();
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "lp_fund",
+        joinColumns = @JoinColumn(name = "fund_id"),
+        inverseJoinColumns = @JoinColumn(name = "lp_id")
+    )
+    private List<LP> lps;
     @ManyToOne
     @JoinColumn(name = "vc_id")
     private VC vc;
 
     // Fund Excel Data
-    @OneToMany
-    private List<FundData> fundData = new ArrayList<>();
+    @OneToMany(mappedBy = "fund", cascade = CascadeType.ALL)
+    private List<FundData> fundData;
 
     // Fund Notifications and Messages
-    @OneToMany(mappedBy = "fund")
-    private Set<Notification> notifications = new HashSet<>();
-    @OneToMany(mappedBy = "fund")
-    private Set<Message> messages = new HashSet<>();
+    @OneToMany(mappedBy = "fund", cascade = CascadeType.ALL)
+    private List<Notification> notifications;
+    @OneToMany(mappedBy = "fund", cascade = CascadeType.ALL)
+    private List<Message> messages;
 
-    public Fund(String fundName, Set<LP> lps, VC vc) {
+    public Fund(String fundName, List<LP> lps, VC vc) {
         this.fundName = fundName;
         this.lps = lps;
         this.vc = vc;

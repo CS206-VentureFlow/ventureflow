@@ -1,20 +1,28 @@
 package com.example.venture.service;
 
-import com.example.venture.model.Fund;
-import com.example.venture.repository.FundRepository;
-import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import com.example.venture.dto.FundDatadto;
+import com.example.venture.dto.Funddto;
+import com.example.venture.model.Fund;
+import com.example.venture.model.FundData;
+import com.example.venture.model.LP;
+import com.example.venture.repository.FundRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class FundService {
 
     private final FundRepository fundRepository;
-
-    public FundService(FundRepository fundRepository) {
-        this.fundRepository = fundRepository;
-    }
+    private final FundDataService fundDataService;
 
     @Transactional
     public Fund saveFund(Fund fund) {
@@ -43,4 +51,26 @@ public class FundService {
         fundRepository.deleteById(id);
     }
 
+    // Get Funddto
+    public Funddto getFunddto(Long fundId) {
+        Fund fund = getFundById(fundId);
+        if (fund == null) {
+            return null;
+        }
+
+        HashMap<String, Long> lps = new HashMap<>();
+        for (LP lp : fund.getLps()) {
+            lps.put(lp.getName(), lp.getId());
+        }
+
+        HashMap<String, Long> vc = new HashMap<>();
+        vc.put(fund.getVc().getName(), fund.getVc().getId());
+        
+        List<FundDatadto> fundDataDtos = new ArrayList<>();
+        for (FundData fundData : fund.getFundData()) {
+            fundDataDtos.add(fundDataService.getFundDatadto(fundData.getId()));
+        }
+
+        return new Funddto(fund.getId(), fund.getFundName(), lps, vc, fundDataDtos);
+    }
 }

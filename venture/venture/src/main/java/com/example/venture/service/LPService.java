@@ -1,44 +1,34 @@
 package com.example.venture.service;
 
-import com.example.venture.model.LP;
-import com.example.venture.repository.LPRepository;
-import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.example.venture.dto.LPdto;
+import com.example.venture.model.Fund;
+import com.example.venture.model.LP;
+import com.example.venture.model.User;
 
+import lombok.AllArgsConstructor;
+
+@AllArgsConstructor
 @Service
 public class LPService {
-    private final LPRepository lpRepository;
 
-    public LPService(LPRepository lpRepository) {
-        this.lpRepository = lpRepository;
-    }
+    private final UserService userService;
 
-    public LP getLPById(Long id) {
-        return lpRepository.findById(id).orElse(null);
-    }
-
-    @Transactional
-    public LP saveLP(LP lp) {
-        return lpRepository.save(lp);
-    }
-
-    @Transactional
-    public LP updateLP(LP lp) {
-        // Check if the Fund exists by its ID
-        Optional<LP> existingLP = lpRepository.findById(lp.getId());
-
-        if (existingLP.isEmpty()) {
-            throw new IllegalArgumentException("LP with ID " + lp.getId() + " does not exist.");
+    // Get LP DTO
+    public LPdto getLPDto(Long lpId) {
+        User user = userService.getUserById(lpId);
+        if (user == null || !(user instanceof LP)) {
+            return null;
         }
-
-        return lpRepository.save(lp);
+        LP lp = (LP) user;
+        HashMap<String, Long> fundMap = new HashMap<>();
+        for (Fund fund : new ArrayList<>(lp.getFunds())) {
+            fundMap.put(fund.getFundName(), fund.getId());
+        }
+        return new LPdto(lp.getId(), lp.getName(), lp.getEmail(), lp.getContactNo(), fundMap);
     }
-
-    @Transactional
-    public void deleteLP(Long id) {
-        lpRepository.deleteById(id);
-    }
-
 }

@@ -1,10 +1,13 @@
 package com.example.venture.service;
 
+import org.springframework.stereotype.Service;
+
+import com.example.venture.dto.FundDatadto;
 import com.example.venture.model.FundData;
 import com.example.venture.repository.FundDataRepository;
+
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
@@ -34,7 +37,13 @@ public class FundDataService {
         fundDataRepository.deleteById(id);
     }
 
-    // TODO: Check if fund data object already exist in DB
+    public FundDatadto getFundDatadto(long fundDataId) {
+        FundData fundData = getFundDataById(fundDataId);
+        if (fundData == null) {
+            return null;
+        }
+        return new FundDatadto();
+    }
 
 
 }

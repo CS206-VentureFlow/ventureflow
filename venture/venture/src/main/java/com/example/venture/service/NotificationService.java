@@ -1,13 +1,16 @@
 package com.example.venture.service;
 
-import com.example.venture.model.Notification;
-import com.example.venture.repository.NotificationRepository;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Set;
+import com.example.venture.dto.Notificationdto;
+import com.example.venture.model.Notification;
+import com.example.venture.repository.NotificationRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 
 @Service
@@ -21,13 +24,21 @@ public class NotificationService {
     }
 
     // Returns all notification within the past week for 1 fund
-    public Set<Notification> getRecentNotifications (Long fundId) {
+    public List<Notification> getRecentNotifications (Long fundId) {
         return notificationRepository.findNotificationsByFundIdAndDateTimeAfter(fundId, LocalDateTime.now().minusDays(7));
     }
 
     // Returns all notification within the past week for 1 user (VC/LP)
-    public Set<Notification> getRecentNotificationsForUser (Long userId) {
+    public List<Notification> getRecentNotificationsForUser (Long userId) {
         return notificationRepository.findNotificationsByUserIdAndDateTimeAfter(userId, LocalDateTime.now().minusDays(7));
+    }
+
+    public Notificationdto getNotificationdto(Long notificationId) {
+        Notification notification = getNotificationById(notificationId);
+        if (notification == null) {
+            return null;
+        }
+        return new Notificationdto(notification.getId(), notification.getMessage(), notification.getDateTime());
     }
 
     @Transactional

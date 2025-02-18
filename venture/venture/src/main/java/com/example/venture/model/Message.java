@@ -22,13 +22,13 @@ public class Message {
     private String sender;
     @ManyToOne
     private Fund fund;
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "message_replies",
             joinColumns = @JoinColumn(name = "message_id"),
             inverseJoinColumns = @JoinColumn(name = "reply_id")
     )
-    private Set<Message> replies = new HashSet<>();
+    private List<Message> replies;
 
 
 }

@@ -1,14 +1,21 @@
 package com.example.venture;
 
-import com.example.venture.model.*;
-import com.example.venture.service.*;
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import com.example.venture.model.Fund;
+import com.example.venture.model.LP;
+import com.example.venture.model.VC;
+import com.example.venture.service.FundDataService;
+import com.example.venture.service.FundService;
+import com.example.venture.service.UserService;
+
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
@@ -35,16 +42,13 @@ public class PopulateData {
 
 
     private void populateFund(int number, int numLP) {
-        for (int i = 0; i < number; i++) {
-            Set<LP> lps = userService.getAllLPs();
-            Set<VC> vcs = userService.getAlVCs();
-
-            // Create fund for each VC with all LP a
-            for (VC vc : vcs) {
-                Fund fund = new Fund("Fund " + i, lps, vc);
-                fundService.saveFund(fund);
-            }
-        }
+        List<LP> lps = new ArrayList<>();
+        lps.add((LP) userService.getUserById(2L));
+        VC vc = (VC) userService.getUserById(1L);
+        
+        // Create fund for each VC with all LP a
+        Fund fund = new Fund("Fund 0", lps, vc);
+        fundService.saveFund(fund);
     }
 
     @EventListener(ContextRefreshedEvent.class)

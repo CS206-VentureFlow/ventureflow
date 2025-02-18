@@ -1,9 +1,14 @@
 package com.example.venture.model;
 
-import jakarta.persistence.*;
-import lombok.*;
+import java.util.List;
 
-import java.util.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
@@ -12,13 +17,8 @@ import java.util.*;
 @DiscriminatorValue("L")
 public class LP extends User {
 
-    @ManyToMany
-    @JoinTable(name = "lp_fund",
-        joinColumns =
-            @JoinColumn(name="lp_id"),
-        inverseJoinColumns =
-            @JoinColumn(name="fund_id"))
-    private Set<Fund> funds = new HashSet<>();
+    @ManyToMany(mappedBy = "lps", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Fund> funds;
 
     public LP(String name, String email, String phoneNumber) {
         super(name, email, phoneNumber);

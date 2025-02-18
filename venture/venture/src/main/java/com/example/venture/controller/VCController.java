@@ -1,15 +1,33 @@
 package com.example.venture.controller;
 
-import com.example.venture.model.*;
-import com.example.venture.service.*;
-import com.example.venture.utility.ExcelUtility;
-import lombok.AllArgsConstructor;
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.*;
+import com.example.venture.dto.Funddto;
+import com.example.venture.dto.Notificationdto;
+import com.example.venture.dto.VCdto;
+import com.example.venture.model.Fund;
+import com.example.venture.model.Notification;
+import com.example.venture.model.User;
+import com.example.venture.model.VC;
+import com.example.venture.service.FundService;
+import com.example.venture.service.NotificationService;
+import com.example.venture.service.UserService;
+import com.example.venture.service.VCService;
+import com.example.venture.utility.ExcelUtility;
+
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/vc")
@@ -17,38 +35,46 @@ import java.util.*;
 public class VCController {
 
     private final UserService userService;
+    private final VCService vcService;
+    private final FundService fundService;
     private final ExcelUtility excelUtility;
     private final NotificationService notificationService;
 
     @GetMapping("/{vcID}/profile")
-    public ResponseEntity<VC> getProfile(@PathVariable Long vcID) {
+    public ResponseEntity<VCdto> getProfile(@PathVariable Long vcID) {
         User vc = userService.getUserById(vcID);
         if (vc == null || !(vc instanceof VC)) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        VC castToVC = (VC) vc;
-        return new ResponseEntity<>(castToVC, HttpStatus.OK);
+        VCdto vcDto = vcService.getVCDto(vcID);
+        return new ResponseEntity<>(vcDto, HttpStatus.OK);
     }
 
     @GetMapping("/{vcID}/funds")
-    public ResponseEntity<Set<Fund>> getFunds(@PathVariable Long vcID) {
+    public ResponseEntity<Set<Funddto>> getFunds(@PathVariable Long vcID) {
         User vc = userService.getUserById(vcID);
         if (vc == null || !(vc instanceof VC)) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         VC castToVC = (VC) vc;
-        Set<Fund> allFunds = castToVC.getFunds();
+        Set<Funddto> allFunds = new HashSet<>();
+        for (Fund fund : castToVC.getFunds()) {
+            allFunds.add(fundService.getFunddto(fund.getId()));
+        }
         return new ResponseEntity<>(allFunds, HttpStatus.OK);
     }
 
     // Get all notifications for VC for the past week (all funds)
     @GetMapping("/{vcID}/notifications")
-    public ResponseEntity<Set<Notification>> getNotifications(@PathVariable Long vcID) {
+    public ResponseEntity<Set<Notificationdto>> getNotifications(@PathVariable Long vcID) {
         User vc = userService.getUserById(vcID);
         if (vc == null || !(vc instanceof VC)) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        Set<Notification> allNotifications = notificationService.getRecentNotificationsForUser(vcID);
+        Set<Notificationdto> allNotifications = new HashSet<>();
+        for (Notification notification : notificationService.getRecentNotificationsForUser(vc.getId())) {
+            allNotifications.add(notificationService.getNotificationdto(notification.getId()));
+        }
         return new ResponseEntity<>(allNotifications, HttpStatus.OK);
     }
 
