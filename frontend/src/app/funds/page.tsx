@@ -8,6 +8,7 @@ import LineChart from "@/components/Charts"
 import PieChart from "@/components/PieChart"
 import MetricFilter from "@/components/MetricFilter"
 import ExcelUpload from "@/components/ExcelUpload"
+import FundsList from "@/components/FundsList"
 import { TrendingUp, TrendingDown, DollarSign, Clock } from "lucide-react"
 
 const fundMetrics = [
@@ -80,6 +81,9 @@ export default function FundPerformance() {
   return (
     <div className="flex flex-col gap-5 w-full">
       <PageTitle title="Fund Performance Metrics" />
+
+      {/* Funds List */}
+      <FundsList vcID="1" />
 
       {/* Excel Upload */}
       <ExcelUpload vcID="1" fundID="1" />
