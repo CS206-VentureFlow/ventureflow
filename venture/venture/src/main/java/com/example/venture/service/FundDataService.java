@@ -12,38 +12,44 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class FundDataService {
-
     private final FundDataRepository fundDataRepository;
 
-    public FundData getFundDataById(Long id) {
-        return fundDataRepository.findById(id).orElse(null);
+    public FundData getFundDataById(String date) {
+        return fundDataRepository.findById(date).orElse(null);
     }
 
     @Transactional
-    public void saveFundData(FundData fundData) {
-        fundDataRepository.save(fundData);
-    }
-
-    @Transactional
-    public void updateFundData(FundData fundData) throws IllegalArgumentException {
-        if (fundData.getId() == null) {
-            throw new IllegalArgumentException("Fund data ID is required");
+    public void saveOrUpdateFundData(FundData fundData) {
+        if (fundData.getDate() == null) {
+            throw new IllegalArgumentException("Fund data date is required");
         }
-        fundDataRepository.save(fundData);
+
+        FundData existingData = fundDataRepository.findById(fundData.getDate()).orElse(null);
+        if (existingData != null) {
+            // Update existing data
+            existingData.setFund(fundData.getFund());
+            existingData.setIrr(fundData.getIrr());
+            existingData.setTvpi(fundData.getTvpi());
+            existingData.setDpi(fundData.getDpi());
+            existingData.setMoic(fundData.getMoic());
+            existingData.setRvpi(fundData.getRvpi());
+            fundDataRepository.save(existingData);
+        } else {
+            // Save new data
+            fundDataRepository.save(fundData);
+        }
     }
 
     @Transactional
-    public void deleteFundData(Long id) {
-        fundDataRepository.deleteById(id);
+    public void deleteFundData(String date) {
+        fundDataRepository.deleteById(date);
     }
 
-    public FundDatadto getFundDatadto(long fundDataId) {
-        FundData fundData = getFundDataById(fundDataId);
+    public FundDatadto getFundDatadto(String date) {
+        FundData fundData = getFundDataById(date);
         if (fundData == null) {
             return null;
         }
         return new FundDatadto();
     }
-
-
 }

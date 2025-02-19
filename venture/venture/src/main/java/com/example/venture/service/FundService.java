@@ -68,7 +68,7 @@ public class FundService {
         
         List<FundDatadto> fundDataDtos = new ArrayList<>();
         for (FundData fundData : fund.getFundData()) {
-            fundDataDtos.add(fundDataService.getFundDatadto(fundData.getId()));
+            fundDataDtos.add(fundDataService.getFundDatadto(fundData.getDate()));
         }
 
         return new Funddto(fund.getId(), fund.getFundName(), lps, vc, fundDataDtos);
