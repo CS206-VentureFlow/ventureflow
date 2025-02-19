@@ -9,12 +9,14 @@ import com.example.venture.repository.FundDataRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDate;
+
 @Service
 @AllArgsConstructor
 public class FundDataService {
     private final FundDataRepository fundDataRepository;
 
-    public FundData getFundDataById(String date) {
+    public FundData getFundDataById(LocalDate date) {
         return fundDataRepository.findById(date).orElse(null);
     }
 
@@ -41,11 +43,11 @@ public class FundDataService {
     }
 
     @Transactional
-    public void deleteFundData(String date) {
+    public void deleteFundData(LocalDate date) {
         fundDataRepository.deleteById(date);
     }
 
-    public FundDatadto getFundDatadto(String date) {
+    public FundDatadto getFundDatadto(LocalDate date) {
         FundData fundData = getFundDataById(date);
         if (fundData == null) {
             return null;

@@ -6,14 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 @Data
 @NoArgsConstructor
 public class FundData {
     @Id
-    private String date;
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "fund_id")
@@ -33,8 +32,7 @@ public class FundData {
 
     public FundData(LocalDate date, Fund fund, double irr, double tvpi, double dpi, double moic, double rvpi,
                     double accelerator, double pre_seed, double seed, double series_a) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM-yy");
-        this.date = date.format(formatter);
+        this.date = date;
         this.fund = fund;
         this.irr = irr;
         this.tvpi = tvpi;

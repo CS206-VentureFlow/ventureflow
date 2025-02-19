@@ -1,8 +1,11 @@
 package com.example.venture.controller;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.example.venture.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,10 +19,6 @@ import com.example.venture.dto.VCdto;
 import com.example.venture.model.Fund;
 import com.example.venture.model.LP;
 import com.example.venture.model.Message;
-import com.example.venture.service.FundService;
-import com.example.venture.service.LPService;
-import com.example.venture.service.MessageService;
-import com.example.venture.service.VCService;
 
 import lombok.AllArgsConstructor;
 
@@ -74,5 +73,13 @@ public class FundController {
         return new ResponseEntity<>(allMessages, HttpStatus.OK);
     }
 
-    
+    // Get all data for fund
+    @GetMapping("/{fundID}/getData")
+    public ResponseEntity<Map<String, List<Map<String, Object>>>> getAllFundData(@PathVariable Long fundID) {
+        Fund fund = fundService.getFundById(fundID);
+        if (fund == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(fundService.getAllFundData(fundID), HttpStatus.OK);
+    }
 }
