@@ -29,6 +29,6 @@ public class LPService {
         for (Fund fund : new ArrayList<>(lp.getFunds())) {
             fundMap.put(fund.getFundName(), fund.getId());
         }
-        return new LPdto(lp.getId(), lp.getName(), lp.getEmail(), lp.getContactNo(), fundMap);
+        return new LPdto(lp.getId(), lp.getName(), lp.getEmail(), lp.getContactNo(), fundMap, lp.getDashboardLayout());
     }
 }

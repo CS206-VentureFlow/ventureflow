@@ -27,6 +27,6 @@ public class VCService {
         for (Fund fund : vc.getFunds()) {
             fundMap.put(fund.getFundName(), fund.getId());
         }
-        return new VCdto(vc.getId(), vc.getName(), vc.getEmail(), vc.getContactNo(), fundMap);
+        return new VCdto(vc.getId(), vc.getName(), vc.getEmail(), vc.getContactNo(), fundMap, vc.getDashboardLayout());
     }
 }

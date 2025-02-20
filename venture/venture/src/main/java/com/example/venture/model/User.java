@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.*;
+
 @Entity
 @NoArgsConstructor
 @Data
@@ -17,6 +19,7 @@ public class User {
     private String name;
     private String email;
     private String contactNo;
+    private String dashboardLayout;
 
     public User(String name, String email, String phoneNumber) {
         this.name = name;

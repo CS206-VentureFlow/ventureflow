@@ -14,4 +14,5 @@ public class VCdto {
     private String contactNo;
     // HashMap<FundName, FundID>
     private HashMap<String, Long> funds;
+    private String dashboardLayout;
 }

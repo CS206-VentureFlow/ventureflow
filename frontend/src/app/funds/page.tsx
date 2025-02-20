@@ -72,6 +72,23 @@ export default function FundPerformance() {
   const allMetrics = ["IRR", "MOIC", "TVPI", "DPI", "RVPI", "Time to Liquidity", "Initial Investments"]
   const [selectedMetrics, setSelectedMetrics] = useState(allMetrics)
 
+  // Should create a default layout (Array<{ metric: string, graphType: string }>)
+  const [dashboardData, setDashboardData] = useState(null)
+
+  // serialise the selected metrics and graph types
+  function serialise(data: Array<{ metric: string, graphType: string }>): string {
+    return data.map((item) => `${item.metric}#${item.graphType}`).join(",");
+  }
+
+  // produces an array of objects [metric, graphType]
+  // each object in array corresponds to a graph/card on the dashboard
+  function deserialise(data: string): Array<{ metric: string, graphType: string }> {
+    return data.split(",").map((item) => {
+      const [metric, graphType] = item.split("#");
+      return { metric, graphType };
+    });
+  }
+
   const handleMetricToggle = (metric: string) => {
     setSelectedMetrics((prev) => (prev.includes(metric) ? prev.filter((m) => m !== metric) : [...prev, metric]))
   }
