@@ -8,11 +8,10 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 
 interface Fund {
-  id: string
-  name: string
-  description: string
-  status: string
-  createdAt: string
+  id: number
+  fundName: string
+  lps: Record<string, number>
+  vc: Record<string, number>
 }
 
 interface FundsListProps {
@@ -28,6 +27,7 @@ export default function FundsList({ vcID }: FundsListProps) {
     setLoading(true)
     try {
       const response = await axios.get(`http://localhost:8080/api/v1/lp/${vcID}/funds`)
+      console.log("Fetched funds:", response.data)
       setFunds(response.data)
       setError(null)
     } catch (err) {
@@ -65,18 +65,9 @@ export default function FundsList({ vcID }: FundsListProps) {
                         className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
                       >
                         <div>
-                          <h3 className="font-medium">{fund.name}</h3>
-                          <p className="text-sm text-muted-foreground">{fund.description}</p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <span className="text-sm text-muted-foreground">{new Date(fund.createdAt).toLocaleDateString()}</span>
-                          <span
-                            className={`text-sm px-2 py-1 rounded-full ${
-                              fund.status === "active" ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"
-                            }`}
-                          >
-                            {fund.status}
-                          </span>
+                          <h3 className="font-medium">{fund.fundName}</h3>
+                          <p className="text-sm text-muted-foreground">LPs: {Object.keys(fund.lps).join(', ')}</p>
+                          <p className="text-sm text-muted-foreground">VCs: {Object.keys(fund.vc).join(', ')}</p>
                         </div>
                       </div>
                     ))}
