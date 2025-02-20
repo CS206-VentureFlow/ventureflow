@@ -62,13 +62,8 @@ public class FundService {
 
         HashMap<String, Long> vc = new HashMap<>();
         vc.put(fund.getVc().getName(), fund.getVc().getId());
-        
-        List<FundDatadto> fundDataDtos = new ArrayList<>();
-        for (FundData fundData : fund.getFundData()) {
-            fundDataDtos.add(fundDataService.getFundDatadto(fundData.getDate()));
-        }
 
-        return new Funddto(fund.getId(), fund.getFundName(), lps, vc, fundDataDtos);
+        return new Funddto(fund.getId(), fund.getFundName(), lps, vc);
     }
 
     public Map<String, List<Map<String, Object>>> getAllFundData(Long fundID) {

@@ -14,5 +14,4 @@ public class Funddto {
     // HashMap<LPName, LPID>
     private HashMap<String, Long> lps;
     private HashMap<String, Long> vc;
-    private List<FundDatadto> fundData;
 }
