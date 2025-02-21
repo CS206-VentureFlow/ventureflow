@@ -95,14 +95,14 @@ export default function FundPerformance() {
         />
       </div>
 
-{/* Keep the page title below FundsList */}
-<div className="flex items-center justify-between"> 
-  <PageTitle title="Fund Performance Metrics" className="mt-4" />
-  <ExcelUpload vcID="1" fundID="1" />
-</div>
+      {/* Keep the page title below FundsList */}
+      <div className="flex items-center justify-between">
+        <PageTitle title="Fund Performance Metrics" className="mt-4" />
+        <ExcelUpload vcID="1" fundID="1" />
+      </div>
 
 
-      
+
 
 
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -135,36 +135,36 @@ export default function FundPerformance() {
 
         {selectedMetrics.includes("IRR") && (
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">TVPI Trend</h2>
-            <Graph graphMetric={"accelerator"} graphType={"pieChart"} fundData={fundData} />
+            <h2 className="text-lg font-semibold mb-4">IRR</h2>
+            <Graph graphMetric={"irr"} graphType={"lineChart"} fundData={fundData} />
           </div>
         )}
 
         {selectedMetrics.includes("TVPI") && (
           <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">TVPI Trend</h2>
-            <BarChart data={fundData.tvpi} xKey="month" yKey="value" fillColor="#005f73" />
+            <h2 className="text-lg font-semibold mb-4">TVPI</h2>
+            <Graph graphMetric={"irr"} graphType={"lineChart"} fundData={fundData} />
           </div>
         )}
 
         {selectedMetrics.includes("DPI") && (
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">DPI Trend</h2>
-            <LineChart data={fundData.dpi} xKey="month" yKey="value" />
+            <Graph graphMetric={"dpi"} graphType={"lineChart"} fundData={fundData} />
           </div>
         )}
 
         {selectedMetrics.includes("MOIC") && (
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">Gross MOIC Trend</h2>
-            <LineChart data={fundData.moic} xKey="month" yKey="value" />
+            <Graph graphMetric={"moic"} graphType={"lineChart"} fundData={fundData} />
           </div>
         )}
 
         {selectedMetrics.includes("RVPI") && (
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">RVPI Trend</h2>
-            <LineChart data={fundData.rvpi} xKey="month" yKey="value" />
+            <Graph graphMetric={"rvpi"} graphType={"lineChart"} fundData={fundData} />
           </div>
         )}
       </section>
