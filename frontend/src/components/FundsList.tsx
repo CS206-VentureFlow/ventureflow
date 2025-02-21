@@ -1,11 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import axios from "axios"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Wallet } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface Fund {
   id: number
@@ -22,8 +24,12 @@ export default function FundsList({ vcID }: FundsListProps) {
   const [funds, setFunds] = useState<Fund[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedFundId, setSelectedFundId] = useState<number | null>(null)
 
   const fetchFunds = async () => {
+    // if (!isOpen) return // Only fetch when opening the popover
+
     setLoading(true)
     try {
       const response = await axios.get(`http://localhost:8080/api/v1/lp/${vcID}/funds`)
@@ -39,45 +45,64 @@ export default function FundsList({ vcID }: FundsListProps) {
   }
 
   return (
-    <Accordion type="single" collapsible onValueChange={(value) => value && fetchFunds()}>
-      <AccordionItem value="funds">
-        <AccordionTrigger className="text-lg font-semibold">Funds</AccordionTrigger>
-        <AccordionContent>
-          <Card>
-            <CardHeader>
-              <CardTitle>List of Funds</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                  <Skeleton className="h-12 w-full" />
-                </div>
-              ) : error ? (
-                <div className="text-red-500">{error}</div>
-              ) : (
-                <ScrollArea className="h-[200px] pr-4">
-                  <div className="space-y-4">
-                    {funds.map((fund) => (
-                      <div
-                        key={fund.id}
-                        className="flex items-center justify-between p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
-                      >
-                        <div>
-                          <h3 className="font-medium">{fund.fundName}</h3>
-                          <p className="text-sm text-muted-foreground">LPs: {Object.keys(fund.lps).join(', ')}</p>
-                          <p className="text-sm text-muted-foreground">VCs: {Object.keys(fund.vc).join(', ')}</p>
+    <Popover
+      onOpenChange={(open) => {
+        setIsOpen(open)
+        if (open) fetchFunds()
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button variant="outline" className="flex items-center gap-2">
+          <Wallet className="h-4 w-4" />
+          Select Fund
+          <span className="ml-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+            {funds.length}
+          </span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80" align="start">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="font-medium leading-none">Available Funds</h4>
+          </div>
+          {loading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          ) : error ? (
+            <div className="text-red-500 text-sm">{error}</div>
+          ) : (
+            <ScrollArea className="h-[300px] pr-4">
+              <div className="space-y-2">
+                {funds.map((fund) => (
+                  <div key={fund.id} className="rounded-lg border bg-card">
+                    <Button
+                      variant="ghost"
+                      className={cn("w-full justify-start p-4 h-auto", selectedFundId === fund.id && "bg-primary/10")}
+                      onClick={() => {
+                        setSelectedFundId(fund.id)
+                        // Additional selection handling
+                        console.log("Selected fund:", fund)
+                      }}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium">{fund.fundName}</div>
+                        <div className="text-xs text-muted-foreground mt-1">
+                          {/* <div>LPs: {Object.keys(fund.lps).join(", ")}</div>
+                          <div>VCs: {Object.keys(fund.vc).join(", ")}</div> */}
                         </div>
                       </div>
-                    ))}
+                    </Button>
                   </div>
-                </ScrollArea>
-              )}
-            </CardContent>
-          </Card>
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+                ))}
+              </div>
+            </ScrollArea>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   )
 }
+
