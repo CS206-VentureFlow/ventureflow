@@ -27,6 +27,23 @@ export default function FundPerformance() {
   const allMetrics = ["IRR", "MOIC", "TVPI", "DPI", "RVPI", "Time to Liquidity", "Initial Investments"];
   const [selectedMetrics, setSelectedMetrics] = useState(allMetrics);
 
+  // Should create a default layout (Array<{ metric: string, graphType: string }>)
+  const [dashboardData, setDashboardData] = useState(null)
+
+  // serialise the selected metrics and graph types
+  function serialise(data: Array<{ metric: string, graphType: string }>): string {
+    return data.map((item) => `${item.metric}#${item.graphType}`).join(",");
+  }
+
+  // produces an array of objects [metric, graphType]
+  // each object in array corresponds to a graph/card on the dashboard
+  function deserialise(data: string): Array<{ metric: string, graphType: string }> {
+    return data.split(",").map((item) => {
+      const [metric, graphType] = item.split("#");
+      return { metric, graphType };
+    });
+  }
+
   interface FundData {
     accelerator: { month: string; value: number }[];
     seed: { month: string; value: number }[];
@@ -65,12 +82,25 @@ export default function FundPerformance() {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <PageTitle title="Fund Performance Metrics" />
-      <FundsList vcID="2" />
+      <div className="flex items-center justify-between">
+  {/* Move FundsList here and reduce its width */}
+  <FundsList vcID="2" className="w-auto px-4 py-2 bg-white rounded-lg shadow-sm" />
+
+  {/* Make MetricFilter smaller */}
+  <MetricFilter
+    metrics={allMetrics}
+    selectedMetrics={selectedMetrics}
+    onMetricToggle={handleMetricToggle}
+    className="w-auto px-4 py-2 text-sm bg-gray-100 rounded-lg shadow-sm"
+  />
+</div>
+
+{/* Keep the page title below FundsList */}
+<PageTitle title="Fund Performance Metrics" className="mt-4" />
+
 
       <ExcelUpload vcID="1" fundID="1" />
 
-      <MetricFilter metrics={allMetrics} selectedMetrics={selectedMetrics} onMetricToggle={handleMetricToggle} />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {filteredFundMetrics.map((metric, index) => (
