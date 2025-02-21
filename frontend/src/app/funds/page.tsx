@@ -133,7 +133,7 @@ export default function FundPerformance() {
         {selectedMetrics.includes("IRR") && (
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">TVPI Trend</h2>
-            <Graph graphMetric={"irr"} graphType={"lineChart"} fundData={fundData} />
+            <Graph graphMetric={"accelerator"} graphType={"pieChart"} fundData={fundData} />
           </div>
         )}
 
