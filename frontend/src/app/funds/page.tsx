@@ -10,6 +10,7 @@ import PieChart from "@/components/PieChart";
 import MetricFilter from "@/components/MetricFilter";
 import ExcelUpload from "@/components/ExcelUpload";
 import FundsList from "@/components/FundsList";
+import Graph from "../../components/Graph";
 import { TrendingUp, TrendingDown, DollarSign, Clock } from "lucide-react";
 
 const fundMetrics = [
@@ -125,10 +126,17 @@ export default function FundPerformance() {
 
       {/* Individual Line Charts */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {selectedMetrics.includes("IRR") && (
+        {/* {selectedMetrics.includes("IRR") && (
           <div className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-lg font-semibold mb-4">IRR Over Time</h2>
             <LineChart data={fundData.irr} xKey="month" yKey="value" />
+          </div>
+        )} */}
+
+        {selectedMetrics.includes("IRR") && (
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h2 className="text-lg font-semibold mb-4">TVPI Trend</h2>
+            <Graph graphMetric={"irr"} graphType={"lineChart"} fundData={fundData} />
           </div>
         )}
 
