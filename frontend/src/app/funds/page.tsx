@@ -64,12 +64,14 @@ export default function FundPerformance() {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <PageTitle title="Fund Performance Metrics" />
+      <div className="flex items-center justify-between">
+        <PageTitle title="Fund Performance Metrics" />
+        <MetricFilter metrics={allMetrics} selectedMetrics={selectedMetrics} onMetricToggle={handleMetricToggle} className="w-auto" />
+      </div>
       <FundsList vcID="2" />
 
       <ExcelUpload vcID="1" fundID="1" />
 
-      <MetricFilter metrics={allMetrics} selectedMetrics={selectedMetrics} onMetricToggle={handleMetricToggle} />
 
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {filteredFundMetrics.map((metric, index) => (
