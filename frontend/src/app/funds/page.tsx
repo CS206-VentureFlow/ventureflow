@@ -82,23 +82,26 @@ export default function FundPerformance() {
   return (
     <div className="flex flex-col gap-5 w-full">
       <div className="flex items-center justify-between">
-  {/* Move FundsList here and reduce its width */}
-  <FundsList vcID="2" className="w-auto px-4 py-2 bg-white rounded-lg shadow-sm" />
+        {/* Move FundsList here and reduce its width */}
+        <FundsList vcID="2" className="w-auto px-4 py-2 bg-white rounded-lg shadow-sm" />
 
-  {/* Make MetricFilter smaller */}
-  <MetricFilter
-    metrics={allMetrics}
-    selectedMetrics={selectedMetrics}
-    onMetricToggle={handleMetricToggle}
-    className="w-auto px-4 py-2 text-sm bg-gray-100 rounded-lg shadow-sm"
-  />
-</div>
+        {/* Make MetricFilter smaller */}
+        <MetricFilter
+          metrics={allMetrics}
+          selectedMetrics={selectedMetrics}
+          onMetricToggle={handleMetricToggle}
+          className="w-auto px-4 py-2 text-sm bg-gray-100 rounded-lg shadow-sm"
+        />
+      </div>
 
 {/* Keep the page title below FundsList */}
-<PageTitle title="Fund Performance Metrics" className="mt-4" />
+<div className="flex items-center justify-between"> 
+  <PageTitle title="Fund Performance Metrics" className="mt-4" />
+  <ExcelUpload vcID="1" fundID="1" />
+</div>
 
 
-      <ExcelUpload vcID="1" fundID="1" />
+      
 
 
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
