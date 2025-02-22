@@ -4,23 +4,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.example.venture.model.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.venture.dto.Funddto;
 import com.example.venture.dto.Notificationdto;
 import com.example.venture.dto.VCdto;
-import com.example.venture.model.Fund;
-import com.example.venture.model.Notification;
-import com.example.venture.model.User;
-import com.example.venture.model.VC;
 import com.example.venture.service.FundService;
 import com.example.venture.service.NotificationService;
 import com.example.venture.service.UserService;
@@ -91,5 +83,26 @@ public class VCController {
         } catch (IOException e) {
             return new ResponseEntity<>("Error processing file", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // Get Dashboard Layout
+    @GetMapping("/{vcID}/dashboard")
+    public ResponseEntity<String> getDashboardLayout(@PathVariable Long vcID) {
+        User vc = userService.getUserById(vcID);
+        if (vc == null || !(vc instanceof VC)) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(vcService.getDashboardLayout(vc.getId()), HttpStatus.OK);
+    }
+
+    // Put Dashboard layout
+    @PutMapping("/{vcID}/dashboard")
+    public ResponseEntity<String> putDashboardLayout(@PathVariable Long vcID, @RequestBody String layout) {
+        User vc = userService.getUserById(vcID);
+        if (vc == null || !(vc instanceof VC)) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        vcService.saveDashboardLayout(vcID, layout);
+        return new ResponseEntity<>(layout, HttpStatus.OK);
     }
 }

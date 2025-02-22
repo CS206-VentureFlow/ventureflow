@@ -27,7 +27,6 @@ export default function FundPerformance() {
   const allMetrics = ["IRR", "MOIC", "TVPI", "DPI", "RVPI", "Time to Liquidity", "Initial Investments"];
   const [selectedMetrics, setSelectedMetrics] = useState(allMetrics);
 
-  // Should create a default layout (Array<{ metric: string, graphType: string }>)
   const [dashboardData, setDashboardData] = useState(null)
 
   // serialise the selected metrics and graph types
@@ -116,13 +115,6 @@ export default function FundPerformance() {
           />
         ))}
       </section>
-
-      {/* Pie Chart
-      {selectedMetrics.includes("Initial Investments") && (
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <PieChart data={fundData.preSeed} title="Number of Initial Investments" />
-        </section>
-      )} */}
 
       {/* Individual Line Charts */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">

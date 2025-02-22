@@ -31,4 +31,23 @@ public class LPService {
         }
         return new LPdto(lp.getId(), lp.getName(), lp.getEmail(), lp.getContactNo(), fundMap, lp.getDashboardLayout());
     }
+
+    // Get dashboard layout for LP
+    public String getDashboardLayout(Long lpId) {
+        User lp = userService.getUserById(lpId);
+        if (lp == null || !(lp instanceof LP)) {
+            return null;
+        }
+        return lp.getDashboardLayout();
+    }
+
+    // Save dashboard layout for LP
+    public void saveDashboardLayout(Long lpId, String layout) {
+        User lp = userService.getUserById(lpId);
+        if (lp == null || !(lp instanceof LP)) {
+            return;
+        }
+        lp.setDashboardLayout(layout);
+        userService.saveOrUpdateUser(lp);
+    }
 }

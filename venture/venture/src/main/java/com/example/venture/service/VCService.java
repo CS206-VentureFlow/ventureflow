@@ -29,4 +29,23 @@ public class VCService {
         }
         return new VCdto(vc.getId(), vc.getName(), vc.getEmail(), vc.getContactNo(), fundMap, vc.getDashboardLayout());
     }
+
+    // Get dashboard layout for VC
+    public String getDashboardLayout(Long vcId) {
+        User vc = userService.getUserById(vcId);
+        if (vc == null || !(vc instanceof VC)) {
+            return null;
+        }
+        return ((VC) vc).getDashboardLayout();
+    }
+
+    // Save dashboard layout for VC
+    public void saveDashboardLayout(Long vcId, String layout) {
+        User vc = userService.getUserById(vcId);
+        if (vc == null || !(vc instanceof VC)) {
+            return;
+        }
+        vc.setDashboardLayout(layout);
+        userService.saveOrUpdateUser(vc);
+    }
 }

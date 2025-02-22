@@ -5,10 +5,7 @@ import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.venture.dto.Funddto;
 import com.example.venture.dto.LPdto;
@@ -69,5 +66,26 @@ public class LPController {
             allNotifications.add(notificationService.getNotificationdto(notification.getId()));
         }
         return new ResponseEntity<>(allNotifications, HttpStatus.OK);
+    }
+
+    // Get Dashboard Layout
+    @GetMapping("/{lpID}/dashboard")
+    public ResponseEntity<String> getDashboardLayout(@PathVariable Long lpID) {
+        User lp = userService.getUserById(lpID);
+        if (lp == null || !(lp instanceof LP)) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(lpService.getDashboardLayout(lp.getId()), HttpStatus.OK);
+    }
+
+    // Put Dashboard layout
+    @PutMapping("/{lpID}/dashboard")
+    public ResponseEntity<String> putDashboardLayout(@PathVariable Long lpID, @RequestBody String layout) {
+        User lp = userService.getUserById(lpID);
+        if (lp == null || !(lp instanceof LP)) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        lpService.saveDashboardLayout(lpID, layout);
+        return new ResponseEntity<>(layout, HttpStatus.OK);
     }
 }

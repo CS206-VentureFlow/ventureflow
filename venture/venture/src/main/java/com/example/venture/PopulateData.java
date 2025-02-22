@@ -29,14 +29,14 @@ public class PopulateData {
     private void populateLP(int number) {
         for (int i = 0; i < number; i++) {
             LP lp = new LP("LP " + i,  "email" + i + "@xyz.com", "1234567890");
-            userService.saveUser(lp);
+            userService.saveOrUpdateUser(lp);
         }
     }
 
     private void populateVC(int number) {
         for (int i = 0; i < number; i++) {
             VC vc = new VC("VC " + i,  "email" + i + "@xyz.com", "1234567890");
-            userService.saveUser(vc);
+            userService.saveOrUpdateUser(vc);
         }
     }
 

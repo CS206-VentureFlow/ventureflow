@@ -49,20 +49,8 @@ public class UserService {
     }
 
     @Transactional
-    public User saveUser(User User) {
-        return userRepository.save(User);
-    }
-
-    @Transactional
-    public User updateUser(User User) {
-        // Check if the User exists by its ID
-        Optional<User> existingUser = userRepository.findById(User.getId());
-
-        if (existingUser.isEmpty()) {
-            throw new IllegalArgumentException("User with ID " + User.getId() + " does not exist.");
-        }
-
-        return userRepository.save(User);
+    public User saveOrUpdateUser(User user) {
+        return userRepository.save(user);
     }
 
     @Transactional
