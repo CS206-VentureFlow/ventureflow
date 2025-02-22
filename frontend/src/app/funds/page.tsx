@@ -23,24 +23,50 @@ const fundMetrics = [
   { label: "Initial Investments", amount: "10", description: "Number of Initial Investments", icon: DollarSign },
 ];
 
+type DashboardMetric = {
+  selected: boolean;
+  graphType: string;
+  timeRange: string;
+};
+
+type DashboardData = {
+  irr: DashboardMetric;
+  moic: DashboardMetric;
+  tvpi: DashboardMetric;
+  dpi: DashboardMetric;
+  rvpi: DashboardMetric;
+};
+
 export default function FundPerformance() {
   const allMetrics = ["IRR", "MOIC", "TVPI", "DPI", "RVPI", "Time to Liquidity", "Initial Investments"];
   const [selectedMetrics, setSelectedMetrics] = useState(allMetrics);
 
-  const [dashboardData, setDashboardData] = useState(null)
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
 
   // serialise the selected metrics and graph types
-  function serialise(data: Array<{ metric: string, graphType: string }>): string {
-    return data.map((item) => `${item.metric}#${item.graphType}`).join(",");
+  function serializeDashboardData(data: DashboardData): string {
+    return Object.entries(data)
+      .map(([metric, { selected, graphType, timeRange }]) => {
+        return `${metric}#${selected}#${graphType}#${timeRange}`;
+      })
+      .join(",");
   }
 
-  // produces an array of objects [metric, graphType]
-  // each object in array corresponds to a graph/card on the dashboard
-  function deserialise(data: string): Array<{ metric: string, graphType: string }> {
-    return data.split(",").map((item) => {
-      const [metric, graphType] = item.split("#");
-      return { metric, graphType };
+  // Deserialises dashboard layout string from backend
+  function updateDashboardData(serialized: string): void {
+    const validMetrics: Array<keyof DashboardData> = ["irr", "moic", "tvpi", "dpi", "rvpi"];
+    const newDashboardData = {} as DashboardData;
+    serialized.split(",").forEach((item) => {
+      const [metric, selectedStr, graphType, timeRange] = item.split("#");
+      if (validMetrics.includes(metric as keyof DashboardData)) {
+        newDashboardData[metric as keyof DashboardData] = {
+          selected: selectedStr === "true",
+          graphType,
+          timeRange,
+        };
+      }
     });
+    setDashboardData(newDashboardData);
   }
 
   interface FundData {
