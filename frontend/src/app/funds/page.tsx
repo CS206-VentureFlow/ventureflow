@@ -1,17 +1,33 @@
 "use client"
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import PageTitle from "@/components/PageTitle";
-import Card from "@/components/card";
-import BarChart from "@/components/BarChart";
-import LineChart from "@/components/Charts";
-import PieChart from "@/components/PieChart";
-import MetricFilter from "@/components/MetricFilter";
-import ExcelUpload from "@/components/ExcelUpload";
-import FundsList from "@/components/FundsList";
-import Graph from "../../components/Graph";
-import { TrendingUp, TrendingDown, DollarSign, Clock } from "lucide-react";
+import { useState, useEffect, useCallback } from "react"
+import axios from "axios"
+import { Clock, MoreVertical, TrendingUp, TrendingDown, DollarSign } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+import type { GraphType, TimeRange } from "@/components/Graph"
+import Graph from "@/components/Graph"
+import PageTitle from "@/components/PageTitle"
+import Card from "@/components/card"
+import MetricFilter from "@/components/MetricFilter"
+import ExcelUpload from "@/components/ExcelUpload"
+import FundsList from "@/components/FundsList"
+
+const TIME_RANGES: { value: TimeRange; label: string }[] = [
+  { value: "1M", label: "1 Month" },
+  { value: "3M", label: "3 Months" },
+  { value: "6M", label: "6 Months" },
+  { value: "1Y", label: "1 Year" },
+  { value: "5Y", label: "5 Years" },
+]
+
+const GRAPH_TYPES: { type: GraphType; label: string }[] = [
+  { type: "lineChart", label: "Line Chart" },
+  { type: "areaChart", label: "Area Chart" },
+  { type: "barChart", label: "Bar Chart" },
+  { type: "pieChart", label: "Pie Chart" },
+]
 
 const fundMetrics = [
   { label: "IRR", amount: "15%", description: "Internal Rate of Return", icon: TrendingUp },
@@ -21,97 +37,153 @@ const fundMetrics = [
   { label: "RVPI", amount: "2.2x", description: "Residual Value to Paid-In Capital", icon: TrendingUp },
   { label: "Time to Liquidity", amount: "36 Months", description: "Time to Liquidity", icon: Clock },
   { label: "Initial Investments", amount: "10", description: "Number of Initial Investments", icon: DollarSign },
-];
+]
 
 type DashboardMetric = {
-  selected: boolean;
-  graphType: string;
-  timeRange: string;
-};
+  selected: boolean
+  graphType: GraphType
+  timeRange: TimeRange
+}
 
 type DashboardData = {
-  irr: DashboardMetric;
-  moic: DashboardMetric;
-  tvpi: DashboardMetric;
-  dpi: DashboardMetric;
-  rvpi: DashboardMetric;
-};
+  irr: DashboardMetric
+  moic: DashboardMetric
+  tvpi: DashboardMetric
+  dpi: DashboardMetric
+  rvpi: DashboardMetric
+}
+
+interface FundData {
+  accelerator: { month: string; value: number }[]
+  seed: { month: string; value: number }[]
+  seriesA: { month: string; value: number }[]
+  irr: { month: string; value: number }[]
+  rvpi: { month: string; value: number }[]
+  dpi: { month: string; value: number }[]
+  preSeed: { month: string; value: number }[]
+  tvpi: { month: string; value: number }[]
+  moic: { month: string; value: number }[]
+}
 
 export default function FundPerformance() {
-  const allMetrics = ["IRR", "MOIC", "TVPI", "DPI", "RVPI", "Time to Liquidity", "Initial Investments"];
-  const [selectedMetrics, setSelectedMetrics] = useState(allMetrics);
+  const allMetrics = ["IRR", "MOIC", "TVPI", "DPI", "RVPI", "Time to Liquidity", "Initial Investments"]
+  const [selectedMetrics, setSelectedMetrics] = useState(allMetrics)
+  const [fundData, setFundData] = useState<FundData | null>(null)
 
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  // Initialize dashboard data with default values
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
+    irr: { selected: true, graphType: "lineChart", timeRange: "1M" },
+    moic: { selected: true, graphType: "lineChart", timeRange: "1M" },
+    tvpi: { selected: true, graphType: "lineChart", timeRange: "1M" },
+    dpi: { selected: true, graphType: "lineChart", timeRange: "1M" },
+    rvpi: { selected: true, graphType: "lineChart", timeRange: "1M" },
+  })
 
-  // serialise the selected metrics and graph types
-  function serializeDashboardData(data: DashboardData): string {
+  // Serialise the dashboard data
+  const serializeDashboardData = useCallback((data: DashboardData): string => {
     return Object.entries(data)
       .map(([metric, { selected, graphType, timeRange }]) => {
-        return `${metric}#${selected}#${graphType}#${timeRange}`;
+        return `${metric}#${selected}#${graphType}#${timeRange}`
       })
-      .join(",");
-  }
+      .join(",")
+  }, [])
 
-  // Deserialises dashboard layout string from backend
-  function updateDashboardData(serialized: string): void {
-    const validMetrics: Array<keyof DashboardData> = ["irr", "moic", "tvpi", "dpi", "rvpi"];
-    const newDashboardData = {} as DashboardData;
+  // Deserialise dashboard layout string from backend
+  const updateDashboardData = useCallback((serialized: string): void => {
+    const validMetrics: Array<keyof DashboardData> = ["irr", "moic", "tvpi", "dpi", "rvpi"]
+    const newDashboardData = {} as DashboardData
     serialized.split(",").forEach((item) => {
-      const [metric, selectedStr, graphType, timeRange] = item.split("#");
+      const [metric, selectedStr, graphType, timeRange] = item.split("#")
       if (validMetrics.includes(metric as keyof DashboardData)) {
         newDashboardData[metric as keyof DashboardData] = {
           selected: selectedStr === "true",
-          graphType,
-          timeRange,
-        };
+          graphType: graphType as GraphType,
+          timeRange: timeRange as TimeRange,
+        }
       }
-    });
-    setDashboardData(newDashboardData);
-  }
+    })
+    setDashboardData(newDashboardData)
+  }, [])
 
-  interface FundData {
-    accelerator: { month: string; value: number }[];
-    seed: { month: string; value: number }[];
-    seriesA: { month: string; value: number }[];
-    irr: { month: string; value: number }[];
-    rvpi: { month: string; value: number }[];
-    dpi: { month: string; value: number }[];
-    preSeed: { month: string; value: number }[];
-    tvpi: { month: string; value: number }[];
-    moic: { month: string; value: number }[];
-  }
+  // Save dashboard layout to backend
+  const saveDashboardLayout = useCallback(
+    async (data: DashboardData) => {
+      try {
+        const serializedData = serializeDashboardData(data)
+        console.log("Saving dashboard layout:", serializedData)
+        await axios.put("http://localhost:8080/api/v1/lp/2/dashboard", serializedData,
+          { headers: { "Content-Type": "text/plain" } }
+        )
+        console.log("Dashboard layout saved successfully")
+      } catch (error) {
+        console.error("Error saving dashboard layout:", error)
+      }
+    },
+    [serializeDashboardData],
+  )
 
-  const [fundData, setFundData] = useState<FundData | null>(null);
+  // Update metric configuration and save to backend
+  const updateMetricConfig = useCallback(
+    (metric: keyof DashboardData, updates: Partial<DashboardMetric>) => {
+      setDashboardData((prev) => {
+        const newData = {
+          ...prev,
+          [metric]: { ...prev[metric], ...updates },
+        }
+        // Save the updated layout to backend
+        saveDashboardLayout(newData)
+        return newData
+      })
+    },
+    [saveDashboardLayout],
+  )
 
-  // Fetch the data from API
+  // Fetch initial dashboard layout and fund data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/v1/fund/1/getData");
-        setFundData(response.data);
-        console.log("Fetched fund data:", response.data);
+        // Fetch dashboard layout
+        const layoutResponse = await axios.get("http://localhost:8080/api/v1/lp/2/dashboard")
+        updateDashboardData(layoutResponse.data)
+
+        // Fetch fund data
+        const fundResponse = await axios.get("http://localhost:8080/api/v1/fund/1/getData")
+        setFundData(fundResponse.data)
+
+        console.log("Fetched dashboard layout:", layoutResponse.data)
+        console.log("Fetched fund data:", fundResponse.data)
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data:", error)
       }
-    };
-    fetchData();
-  }, []);
+    }
+    fetchData()
+  }, [updateDashboardData])
 
-  const handleMetricToggle = (metric: string) => {
-    setSelectedMetrics((prev) => (prev.includes(metric) ? prev.filter((m) => m !== metric) : [...prev, metric]));
-  };
+  const handleMetricToggle = useCallback(
+    (metric: string) => {
+      setSelectedMetrics((prev) => {
+        const newMetrics = prev.includes(metric) ? prev.filter((m) => m !== metric) : [...prev, metric]
 
-  const filteredFundMetrics = fundMetrics.filter((metric) => selectedMetrics.includes(metric.label.split(" ")[0]));
+        // Update dashboard data when metrics are toggled
+        const metricKey = metric.toLowerCase() as keyof DashboardData
+        if (dashboardData[metricKey]) {
+          updateMetricConfig(metricKey, { selected: !prev.includes(metric) })
+        }
 
-  if (!fundData) return <div>Loading...</div>;
+        return newMetrics
+      })
+    },
+    [dashboardData, updateMetricConfig],
+  )
+
+  const filteredFundMetrics = fundMetrics.filter((metric) => selectedMetrics.includes(metric.label.split(" ")[0]))
+
+  if (!fundData) return <div>Loading...</div>
 
   return (
     <div className="flex flex-col gap-5 w-full">
       <div className="flex items-center justify-between">
-        {/* Move FundsList here and reduce its width */}
         <FundsList vcID="2" className="w-auto px-4 py-2 bg-white rounded-lg shadow-sm" />
-
-        {/* Make MetricFilter smaller */}
         <MetricFilter
           metrics={allMetrics}
           selectedMetrics={selectedMetrics}
@@ -120,15 +192,10 @@ export default function FundPerformance() {
         />
       </div>
 
-      {/* Keep the page title below FundsList */}
       <div className="flex items-center justify-between">
         <PageTitle title="Fund Performance Metrics" className="mt-4" />
         <ExcelUpload vcID="1" fundID="1" />
       </div>
-
-
-
-
 
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
         {filteredFundMetrics.map((metric, index) => (
@@ -142,50 +209,81 @@ export default function FundPerformance() {
         ))}
       </section>
 
-      {/* Individual Line Charts */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* {selectedMetrics.includes("IRR") && (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">IRR Over Time</h2>
-            <LineChart data={fundData.irr} xKey="month" yKey="value" />
-          </div>
-        )} */}
+        {Object.entries(dashboardData).map(([metric, config]) => {
+          const metricKey = metric as keyof DashboardData
+          if (!selectedMetrics.includes(metricKey.toUpperCase())) return null
 
-        {selectedMetrics.includes("IRR") && (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">IRR</h2>
-            <Graph graphMetric={"irr"} graphType={"lineChart"} fundData={fundData} />
-          </div>
-        )}
-
-        {selectedMetrics.includes("TVPI") && (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">TVPI</h2>
-            <Graph graphMetric={"irr"} graphType={"lineChart"} fundData={fundData} />
-          </div>
-        )}
-
-        {selectedMetrics.includes("DPI") && (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">DPI Trend</h2>
-            <Graph graphMetric={"dpi"} graphType={"lineChart"} fundData={fundData} />
-          </div>
-        )}
-
-        {selectedMetrics.includes("MOIC") && (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">Gross MOIC Trend</h2>
-            <Graph graphMetric={"moic"} graphType={"lineChart"} fundData={fundData} />
-          </div>
-        )}
-
-        {selectedMetrics.includes("RVPI") && (
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">RVPI Trend</h2>
-            <Graph graphMetric={"rvpi"} graphType={"lineChart"} fundData={fundData} />
-          </div>
-        )}
+          return (
+            <div key={metric} className="bg-white p-6 rounded-lg shadow relative">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-lg font-semibold">{metricKey.toUpperCase()}</h2>
+                <div className="flex gap-2">
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-8">
+                        <Clock className="h-4 w-4 mr-2" />
+                        {TIME_RANGES.find((r) => r.value === config.timeRange)?.label}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48" align="end">
+                      <div className="grid gap-2">
+                        <h4 className="font-medium leading-none mb-2">Time Range</h4>
+                        {TIME_RANGES.map((range) => (
+                          <Button
+                            key={range.value}
+                            variant="ghost"
+                            className={cn(
+                              "w-full justify-start",
+                              config.timeRange === range.value && "bg-primary/10 text-primary",
+                            )}
+                            onClick={() => updateMetricConfig(metricKey, { timeRange: range.value })}
+                          >
+                            {range.label}
+                          </Button>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48" align="end">
+                      <div className="grid gap-2">
+                        <h4 className="font-medium leading-none mb-2">Chart Type</h4>
+                        {GRAPH_TYPES.map((graphType) => (
+                          <Button
+                            key={graphType.type}
+                            variant="ghost"
+                            className={cn(
+                              "w-full justify-start",
+                              config.graphType === graphType.type && "bg-primary/10 text-primary",
+                            )}
+                            onClick={() => updateMetricConfig(metricKey, { graphType: graphType.type })}
+                          >
+                            {graphType.label}
+                          </Button>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+              <Graph
+                graphMetric={metricKey}
+                graphType={config.graphType}
+                timeRange={config.timeRange}
+                fundData={fundData}
+                title={metricKey.toUpperCase()}
+              />
+            </div>
+          )
+        })}
       </section>
     </div>
-  );
+  )
 }
+
