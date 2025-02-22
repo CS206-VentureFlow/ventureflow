@@ -25,5 +25,7 @@ public class User {
         this.name = name;
         this.email = email;
         this.contactNo = phoneNumber;
+        // Default dashboard layout
+        this.dashboardLayout = "irr#true#lineChart#6M,moic#true#lineChart#6M,tvpi#true#lineChart#6M,dpi#true#lineChart#6M,rvpi#true#lineChart#6M";
     }
 }
