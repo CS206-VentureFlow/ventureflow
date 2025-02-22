@@ -3,16 +3,11 @@ package com.example.venture;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.venture.model.*;
+import com.example.venture.service.*;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
-import com.example.venture.model.Fund;
-import com.example.venture.model.LP;
-import com.example.venture.model.VC;
-import com.example.venture.service.FundDataService;
-import com.example.venture.service.FundService;
-import com.example.venture.service.UserService;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -24,6 +19,8 @@ public class PopulateData {
     private final FundDataService fundDataService;
     private final FundService fundService;
     private final UserService userService;
+    private final TopicService topicService;
+    private final MessageService messageService;
 
 
     private void populateLP(int number) {
@@ -51,6 +48,18 @@ public class PopulateData {
         fundService.saveFund(fund);
     }
 
+    private void populateTopic(int fundID) {
+        Fund fund = fundService.getFundById((long) fundID);
+        Topic topic = new Topic("Topic 0", "VC 0", fund);
+        topicService.saveOrUpdateTopic(topic);
+    }
+
+    private void populateMessage(int topicID) {
+        Topic topic = topicService.getTopicById((long) topicID);
+        Message message = new Message("Message 0", "VC 0", topic);
+        messageService.saveOrUpdateMessage(message);
+    }
+
     @EventListener(ContextRefreshedEvent.class)
     @Transactional
     public void populate() {
@@ -61,5 +70,7 @@ public class PopulateData {
         populateVC(numVC);
         populateLP(numLP);
         populateFund(numFunds, numLP);
+        populateTopic(1);
+        populateMessage(1);
     }
 }

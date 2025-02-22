@@ -32,11 +32,11 @@ public class Fund {
     @OneToMany(mappedBy = "fund", cascade = CascadeType.ALL)
     private List<FundData> fundData;
 
-    // Fund Notifications and Messages
+    // Fund Notifications and Topics
     @OneToMany(mappedBy = "fund", cascade = CascadeType.ALL)
     private List<Notification> notifications;
     @OneToMany(mappedBy = "fund", cascade = CascadeType.ALL)
-    private List<Message> messages;
+    private List<Topic> topics;
 
     public Fund(String fundName, List<LP> lps, VC vc) {
         this.fundName = fundName;

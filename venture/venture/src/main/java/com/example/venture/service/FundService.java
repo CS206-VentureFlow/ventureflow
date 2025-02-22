@@ -2,6 +2,8 @@ package com.example.venture.service;
 
 import java.util.*;
 
+import com.example.venture.dto.Topicdto;
+import com.example.venture.model.Topic;
 import org.springframework.stereotype.Service;
 
 import com.example.venture.dto.FundDatadto;
@@ -20,6 +22,7 @@ public class FundService {
 
     private final FundRepository fundRepository;
     private final FundDataService fundDataService;
+    private final TopicService topicService;
 
     @Transactional
     public Fund saveFund(Fund fund) {
@@ -133,5 +136,18 @@ public class FundService {
         }
 
         return result;
+    }
+
+    // Get all topics related to a fund
+    public Set<Topicdto> getAllTopics(Long fundID) {
+        Fund fund = getFundById(fundID);
+        if (fund == null) {
+            return null;
+        }
+        Set<Topicdto> topics = new HashSet<>();
+        for (Topic topic : fund.getTopics()) {
+            topicService.getTopicdto(topic.getId());
+        }
+        return topics;
     }
 }

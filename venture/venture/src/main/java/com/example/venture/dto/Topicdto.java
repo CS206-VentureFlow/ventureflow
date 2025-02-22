@@ -1,13 +1,14 @@
 package com.example.venture.dto;
 
-import java.util.Set;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.Set;
+
 @AllArgsConstructor
 @Data
-public class Messagedto {
+public class Topicdto {
+    private Long id;
     private String message;
     private String sender;
 }

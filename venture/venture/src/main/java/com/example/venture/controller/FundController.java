@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.example.venture.dto.Topicdto;
+import com.example.venture.model.Topic;
 import com.example.venture.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class FundController {
     private final FundService fundService;
     private final LPService lpService;
     private final VCService vcService;
-    private final MessageService messageService;
+    private final TopicService topicService;
 
     // TODO: GET endpoints for all columns of FundData
 
@@ -60,17 +62,17 @@ public class FundController {
     }
 
     // Get all Messages associated with a Fund
-    @GetMapping("/{fundID}/messages")
-    public ResponseEntity<Set<Messagedto>> getMessages(@PathVariable Long fundID) {
+    @GetMapping("/{fundID}/topics")
+    public ResponseEntity<Set<Topicdto>> getMessages(@PathVariable Long fundID) {
         Fund fund = fundService.getFundById(fundID);
         if (fund == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        Set<Messagedto> allMessages = new HashSet<>();
-        for (Message message : fund.getMessages()) {
-            allMessages.add(messageService.getMessagedto(message.getId()));
+        Set<Topicdto> allTopics = new HashSet<>();
+        for (Topic topic : fund.getTopics()) {
+            allTopics.add(topicService.getTopicdto(topic.getId()));
         }
-        return new ResponseEntity<>(allMessages, HttpStatus.OK);
+        return new ResponseEntity<>(allTopics, HttpStatus.OK);
     }
 
     // Get all data for fund

@@ -5,30 +5,22 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.*;
-
-/*
-* For VC and LP to communicate with each other
-* - contains its own set of messages
-*/
 @Entity
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
+// Reply to a topic
 public class Message {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String message;
     private String sender;
     @ManyToOne
-    private Fund fund;
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "message_replies",
-            joinColumns = @JoinColumn(name = "message_id"),
-            inverseJoinColumns = @JoinColumn(name = "reply_id")
-    )
-    private List<Message> replies;
+    private Topic topic;
 
-
+    public Message(String message, String sender, Topic topic) {
+        this.message = message;
+        this.sender = sender;
+        this.topic = topic;
+    }
 }
