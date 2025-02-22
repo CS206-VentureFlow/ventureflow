@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import axios from "axios"
-import { Clock, MoreVertical, TrendingUp, TrendingDown, DollarSign, MessageCircle } from "lucide-react"
+import { Clock, MoreVertical, TrendingUp, TrendingDown, DollarSign, MessageCircle, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
@@ -69,6 +69,7 @@ interface FundData {
 export default function FundPerformance() {
   const allMetrics = ["IRR", "MOIC", "TVPI", "DPI", "RVPI", "Time to Liquidity", "Initial Investments"]
   const [fundData, setFundData] = useState<FundData | null>(null)
+  const [userType, setUserType] = useState(() => sessionStorage.getItem("userType") || "VC")
 
   // Initialize dashboard data with default values
   const [dashboardData, setDashboardData] = useState<DashboardData>({
@@ -145,6 +146,10 @@ export default function FundPerformance() {
 
   // Fetch initial dashboard layout and fund data
   useEffect(() => {
+    const handleUserTypeChange = () => { 
+      setUserType(sessionStorage.getItem("userType") || "VC")
+    }
+    window.addEventListener("userTypeChange", handleUserTypeChange);
     const fetchData = async () => {
       try {
         // Fetch dashboard layout
@@ -162,6 +167,10 @@ export default function FundPerformance() {
       }
     }
     fetchData()
+
+    return () => {
+      window.removeEventListener("userTypeChange", handleUserTypeChange);
+    }
   }, [updateDashboardData])
 
   // Updated handleMetricToggle to work with dashboardData
@@ -205,7 +214,14 @@ export default function FundPerformance() {
 
       <div className="flex items-center justify-between">
         <PageTitle title="Fund Performance Metrics" className="mt-4" />
-        <ExcelUpload vcID="1" fundID="1" />
+        {userType === "VC" ? (
+          <ExcelUpload vcID="1" fundID="1" />
+        ) : (
+          <Button variant="outline" size="sm" className="h-9">
+            <Download className="h-4 w-4 mr-2" />
+            Download Report
+          </Button>
+        )}
       </div>
 
       <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
