@@ -1,12 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus } from "lucide-react"
 import PageTitle from "@/components/PageTitle"
+import { NewMessageDialog } from "./new-message-dialog"
 
 interface Message {
   id: number
@@ -48,10 +47,26 @@ const SAMPLE_MESSAGES: Message[] = [
 ]
 
 export default function MessageBoard() {
+  const [messages, setMessages] = useState<Message[]>(SAMPLE_MESSAGES)
   const [selectedTab, setSelectedTab] = useState<string>("General")
   const [selectedLP, setSelectedLP] = useState<string>("all")
 
-  const filteredMessages = SAMPLE_MESSAGES.filter(
+  const handleNewMessage = (newMessage: {
+    type: "General" | "Update" | "Capital Call"
+    subject: string
+    content: string
+  }) => {
+    const message: Message = {
+      id: messages.length + 1,
+      investor: "Current User", // This should come from your auth system
+      title: newMessage.subject,
+      content: newMessage.content,
+      type: newMessage.type,
+    }
+    setMessages([...messages, message])
+  }
+
+  const filteredMessages = messages.filter(
     (message) =>
       (selectedTab === "all" || message.type === selectedTab) &&
       (selectedLP === "all" || message.investor === selectedLP),
@@ -89,14 +104,13 @@ export default function MessageBoard() {
             <div className="space-y-4">
               {filteredMessages.map((message) => (
                 <Card key={message.id} className="p-4">
-                    <div className="flex flex-col gap-2">
-                        <div className="flex flex-col items-start">
-                            
-                            <span className="font-bold">{message.title}</span>
-                            <h3>{message.investor}</h3>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{message.content}</p>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-col items-start">
+                      <span className="font-bold">{message.title}</span>
+                      <h3>{message.investor}</h3>
                     </div>
+                    <p className="text-sm text-muted-foreground">{message.content}</p>
+                  </div>
                 </Card>
               ))}
             </div>
@@ -104,9 +118,7 @@ export default function MessageBoard() {
         ))}
       </Tabs>
 
-      <Button className="fixed bottom-6 right-6 rounded-full shadow-lg" size="lg">
-        <Plus className="mr-2 h-4 w-4" /> New
-      </Button>
+      <NewMessageDialog onSubmit={handleNewMessage} />
     </div>
   )
 }

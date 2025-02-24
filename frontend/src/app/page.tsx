@@ -36,8 +36,8 @@ const fundMetrics = [
   { label: "TVPI", amount: "3.0x", description: "Total Value to Paid-In Capital", icon: TrendingUp },
   { label: "DPI", amount: "0.8x", description: "Distributed to Paid-In Capital", icon: TrendingDown },
   { label: "RVPI", amount: "2.2x", description: "Residual Value to Paid-In Capital", icon: TrendingUp },
-  { label: "Time to Liquidity", amount: "36 Months", description: "Time to Liquidity", icon: Clock },
-  { label: "Initial Investments", amount: "10", description: "Number of Initial Investments", icon: DollarSign },
+  // { label: "Time to Liquidity", amount: "36 Months", description: "Time to Liquidity", icon: Clock },
+  // { label: "Initial Investments", amount: "10", description: "Number of Initial Investments", icon: DollarSign },
 ]
 
 type DashboardMetric = {
