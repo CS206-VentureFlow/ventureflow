@@ -1,15 +1,12 @@
 package com.example.venture.controller;
 
-import com.example.venture.dto.Messagedto;
-import com.example.venture.model.Topic;
-import com.example.venture.service.TopicService;
+import com.example.venture.dto.*;
+import com.example.venture.model.*;
+import com.example.venture.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -18,13 +15,28 @@ import java.util.Set;
 @AllArgsConstructor
 public class TopicController {
     private final TopicService topicService;
+    private final MessageService messageService;
 
+    // Get all messages for topic
     @GetMapping("/{topicID}")
-    public ResponseEntity<Set<Messagedto>> getTopic(@PathVariable Long topicID) {
+    public ResponseEntity<Set<Messagedto>> getAllMessages(@PathVariable Long topicID) {
         Topic topic = topicService.getTopicById(topicID);
         if (topic == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(topicService.getMessages(topicID), HttpStatus.OK);
     }
+
+    // New Message for topic
+    @PostMapping("/{topicID}/newMessage")
+    public ResponseEntity<String> addMesaage(@PathVariable Long topicID, @RequestBody Messagedto messagedto) {
+        Topic topic = topicService.getTopicById(topicID);
+        if (topic == null) {
+            return new ResponseEntity<>("Topic not found", HttpStatus.BAD_REQUEST);
+        }
+        Message message = new Message(messagedto.getMessage(), messagedto.getSender(), topic);
+        messageService.saveOrUpdateMessage(message);
+        return new ResponseEntity<>("Message added", HttpStatus.OK);
+    }
+
 }

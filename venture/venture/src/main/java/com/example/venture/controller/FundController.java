@@ -10,10 +10,7 @@ import com.example.venture.model.Topic;
 import com.example.venture.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.venture.dto.LPdto;
 import com.example.venture.dto.Messagedto;
@@ -73,6 +70,18 @@ public class FundController {
             allTopics.add(topicService.getTopicdto(topic.getId()));
         }
         return new ResponseEntity<>(allTopics, HttpStatus.OK);
+    }
+
+    // Post new topic for fund
+    @PostMapping("/{fundID}/newTopic")
+    public ResponseEntity<String> addTopic(@PathVariable Long fundID, @RequestBody Topicdto topicdto) {
+        Fund fund = fundService.getFundById(fundID);
+        if (fund == null) {
+            return new ResponseEntity<>("Fund not found", HttpStatus.BAD_REQUEST);
+        }
+        Topic topic = new Topic(topicdto.getMessage(), topicdto.getSender(), fund);
+        topicService.saveOrUpdateTopic(topic);
+        return new ResponseEntity<>("Topic added", HttpStatus.OK);
     }
 
     // Get all data for fund
