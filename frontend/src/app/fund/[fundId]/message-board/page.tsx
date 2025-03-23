@@ -1,76 +1,70 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useParams } from "next/navigation"
+import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import PageTitle from "@/components/PageTitle"
 import { NewMessageDialog } from "./new-message-dialog"
 
-interface Message {
+// Interface matching the API return structure
+interface Topic {
   id: number
-  investor: string
-  title: string
-  content: string
-  type: "General" | "Update" | "Capital Call"
+  message: string
+  sender: string
 }
 
-const SAMPLE_MESSAGES: Message[] = [
-  {
-    id: 1,
-    investor: "Investor 1",
-    title: "Not Replying Instantly",
-    content: "I am messaging you to raise a complaint that your staff does not reply within 10s of receiv...",
-    type: "General",
-  },
-  {
-    id: 2,
-    investor: "Investor 2",
-    title: "Hello",
-    content: "Hello!",
-    type: "General",
-  },
-  {
-    id: 3,
-    investor: "Investor 3",
-    title: "Request for Data Update",
-    content: "Hi, can you please upload the latest data",
-    type: "Update",
-  },
-  {
-    id: 4,
-    investor: "Investor 4",
-    title: "Request for Data Update",
-    content: "Hello, please update your data thanks",
-    type: "Update",
-  },
-]
-
 export default function MessageBoard() {
-  const [messages, setMessages] = useState<Message[]>(SAMPLE_MESSAGES)
+  const { fundId } = useParams()
+  const [topics, setTopics] = useState<Topic[]>([])
   const [selectedTab, setSelectedTab] = useState<string>("General")
   const [selectedLP, setSelectedLP] = useState<string>("all")
 
+  // Fetch the topics using the fundId parameter
+  useEffect(() => {
+    if (!fundId) return
+    fetch(`http://localhost:8080/api/v1/fund/${fundId}/topics`)
+      .then((res) => res.json())
+      .then((data: Topic[]) => {
+        setTopics(data)
+        console.log("Fetched topics:", data)
+      })
+      .catch((err) => console.error("Error fetching topics:", err))
+  }, [fundId])
+
+  // For styling consistency, we keep the same structure, though the tab/LP filters are not applied to these topics
+  const filteredTopics = topics
+
+  // Handle new message creation, calling the backend endpoint
   const handleNewMessage = (newMessage: {
     type: "General" | "Update" | "Capital Call"
-    subject: string
     content: string
   }) => {
-    const message: Message = {
-      id: messages.length + 1,
-      investor: "Current User", // This should come from your auth system
-      title: newMessage.subject,
-      content: newMessage.content,
-      type: newMessage.type,
-    }
-    setMessages([...messages, message])
-  }
+    if (!fundId) return
 
-  const filteredMessages = messages.filter(
-    (message) =>
-      (selectedTab === "all" || message.type === selectedTab) &&
-      (selectedLP === "all" || message.investor === selectedLP),
-  )
+    const newTopic: Topic = {
+      id: 1, // Your backend will likely overwrite this ID
+      message: newMessage.content,
+      sender: "Test User"
+    }
+
+    fetch(`http://localhost:8080/api/v1/fund/${fundId}/newTopic`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newTopic)
+    })
+      .then((res) => res.json())
+      .then((data: Topic) => {
+        setTopics((prev) => [...prev, data])
+      })
+      .catch((err) => console.error("Error creating new topic:", err))
+
+    console.log("New message submitted:", newMessage)
+  }
 
   return (
     <div className="flex flex-col gap-5 w-full p-6">
@@ -102,16 +96,17 @@ export default function MessageBoard() {
         {["General", "Update", "Capital Call"].map((tab) => (
           <TabsContent key={tab} value={tab} className="mt-4">
             <div className="space-y-4">
-              {filteredMessages.map((message) => (
-                <Card key={message.id} className="p-4">
-                  <div className="flex flex-col gap-2">
-                    <div className="flex flex-col items-start">
-                      <span className="font-bold">{message.title}</span>
-                      <h3>{message.investor}</h3>
+              {filteredTopics.map((topic) => (
+                <Link key={topic.id} href={`/fund/${fundId}/topic/${topic.id}`}>
+                  <Card className="p-4 cursor-pointer hover:bg-accent/10 transition-colors">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-col items-start">
+                        <span className="font-bold">{topic.message}</span>
+                        <h3>{topic.sender}</h3>
+                      </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">{message.content}</p>
-                  </div>
-                </Card>
+                  </Card>
+                </Link>
               ))}
             </div>
           </TabsContent>
@@ -122,4 +117,3 @@ export default function MessageBoard() {
     </div>
   )
 }
-
