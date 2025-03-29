@@ -39,6 +39,15 @@ const fundMetrics = [
   // { label: "Time to Liquidity", amount: "36 Months", description: "Time to Liquidity", icon: Clock },
   // { label: "Initial Investments", amount: "10", description: "Number of Initial Investments", icon: DollarSign },
 ]
+// const fundMetrics = [
+//   { label: "Average IRR", amount: "-", description: "Internal Rate of Return", icon: TrendingUp },
+//   { label: "Gross MOIC", amount: "-", description: "Multiple on Invested Capital", icon: TrendingUp },
+//   { label: "TVPI", amount: "-", description: "Total Value to Paid-In Capital", icon: TrendingUp },
+//   { label: "DPI", amount: "-", description: "Distributed to Paid-In Capital", icon: TrendingDown },
+//   { label: "RVPI", amount: "-", description: "Residual Value to Paid-In Capital", icon: TrendingUp },
+//   // { label: "Time to Liquidity", amount: "36 Months", description: "Time to Liquidity", icon: Clock },
+//   // { label: "Initial Investments", amount: "10", description: "Number of Initial Investments", icon: DollarSign },
+// ]
 
 type DashboardMetric = {
   selected: boolean

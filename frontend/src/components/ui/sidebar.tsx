@@ -35,7 +35,14 @@ export default function Sidebar() {
     }
 
     return (
-        <div className={`relative min-w-[80px] border-r px-3 pb-10 pt-24 transition-all ${isCollapsed ? "w-[80px]" : "w-[250px]"}`}>
+        <div className={`relative min-w-[80px] border-r px-3 pb-10 pt-6 transition-all ${isCollapsed ? "w-[80px]" : "w-[250px]"}`}>
+            {/* VentureFlow Title */}
+            <div className={`mb-6 ${isCollapsed ? "text-center" : ""}`}>
+                <h2 className={`font-bold text-primary ${isCollapsed ? "text-sm" : "text-xl"}`}>
+                    {isCollapsed ? "VF" : "VentureFlow"}
+                </h2>
+            </div>
+
             {!mobileWidth && (
                 <div className="absolute right-[-20px] top-7">
                     <Button variant="secondary" className="rounded-full p-2" onClick={toggleSidebar}>
